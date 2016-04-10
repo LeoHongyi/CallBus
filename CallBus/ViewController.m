@@ -64,7 +64,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self lM];
-    self.anno = [[CBAnno alloc]init];
+    //self.anno = [[CBAnno alloc]init];
    
     self.mapView.showsUserLocation = YES;
     self.mapView.showsTraffic = YES;
@@ -72,11 +72,66 @@
     self.mapView.delegate = self;
     self.navBtn.enabled = NO;
     
+
+    NSArray *locArr = @[@"26 cleveland harrison nj",@"250 central ave Newark nj"];
+    CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
+    CLGeocoder *geocoder2 = [[CLGeocoder alloc]init];
+    NSArray *geocoders = @[geocoder1,geocoder2];
     
+    int i = 0;
   
+    
+    for (i = 0; i < locArr.count; i++) {
+        NSLog(@"%@",locArr[i]);
+        [geocoders[i] geocodeAddressString:locArr[i] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+            if (error == nil) {
+                CLPlacemark *placemark = [placemarks firstObject];
+                NSLog(@"%@",placemark);
+                CBAnno *anno1 = [[CBAnno alloc]init];
+                anno1.coordinate = placemark.location.coordinate;
+                anno1.title = @"Destionation";
+                
+                [self.mapView addAnnotation:anno1];
+                
+                
+            }
+            
+            
+            
+        }];
+    }
+}
+
+
+-(void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+    self.endLoc = [[CLLocation alloc] initWithLatitude:view.annotation.coordinate.latitude longitude:view.annotation.coordinate.longitude];
+    [self.geocoder reverseGeocodeLocation:self.endLoc completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+        
+        
+        if (error == nil) {
+            CLPlacemark *endplacemark1 = [placemarks firstObject];
+            self.endCLPlacemark = endplacemark1;
+            [self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
+            
+            if (self.startCLPlacemark == self.endCLPlacemark) {
+                [self.mapView removeOverlay:self.polyline];
+                [self.mapView removeAnnotation:view.annotation];
+            }
+            
+            
+            
+        }
+    }];
     
     
 }
+
+
+
+
+
+
 
 
 
@@ -98,7 +153,7 @@
             CLPlacemark *placemark = [placemarks firstObject];
             
             self.startCLPlacemark = placemark;
-            NSLog(@"%@",self.startCLPlacemark);
+            //NSLog(@"%@",self.startCLPlacemark);
             
             if (self.endCLPlacemark != NULL) {
                 [self startDirectionsWithstartCLPlacemark:placemark endCLPlacemark:self.endCLPlacemark];
@@ -107,6 +162,7 @@
             
             if (self.startCLPlacemark == self.endCLPlacemark) {
                 [self.mapView removeOverlay:self.polyline];
+                
             }
         }
     }];
@@ -129,8 +185,14 @@
         
         self.endCLPlacemark = [placemarks firstObject];
         //self.coordinate = self.endCLPlacemark.location.coordinate;
-        [self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
         
+        
+        [self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
+        CBAnno *anno = [[CBAnno alloc]init];
+        anno.coordinate =  self.endCLPlacemark.location.coordinate;
+        //anno.title = [NSString stringWithFormat:@"%@ min",self.expected];
+        anno.title = @"destination";
+        [self.mapView addAnnotation:anno];
         
     }];
     
@@ -148,6 +210,8 @@
     
 }
 
+
+
 -(void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState
 {
     if (newState == MKAnnotationViewDragStateEnding) {
@@ -164,6 +228,26 @@
                 
                 if (self.startCLPlacemark == self.endCLPlacemark) {
                     [self.mapView removeOverlay:self.polyline];
+                    self.endLoc = [[CLLocation alloc] initWithLatitude:view.annotation.coordinate.latitude longitude:view.annotation.coordinate.longitude];
+                    [self.geocoder reverseGeocodeLocation:self.endLoc completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+                        
+                        
+                        if (error == nil) {
+                            CLPlacemark *endplacemark1 = [placemarks firstObject];
+                            self.endCLPlacemark = endplacemark1;
+                            [self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
+                            
+                            if (self.startCLPlacemark == self.endCLPlacemark) {
+                                [self.mapView removeOverlay:self.polyline];
+                                [self.mapView removeAnnotation:view.annotation];
+                                
+                            }
+                            
+                            
+                            
+                            
+                        }
+                    }];
                 }
                 
                 
@@ -171,30 +255,6 @@
             }
         }];
         
-        
-        
-        
-        
-        
-        
-//        [self.geocoder reverseGeocodeLocation:userLocation.location completionHandler:^(NSArray *placemarks, NSError *error) {
-//            
-//            if (error == nil) {
-//                CLPlacemark *placemark = [placemarks firstObject];
-//                
-//                if (self.endCLPlacemark != NULL) {
-//                    [self startDirectionsWithstartCLPlacemark:placemark endCLPlacemark:self.endCLPlacemark];
-//                }
-//                
-//                
-//                if (self.startCLPlacemark == self.endCLPlacemark) {
-//                    [self.mapView removeOverlay:self.polyline];
-//                }
-//            }
-//        }];
-
-        
-        //[self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
         
     }
     
@@ -235,15 +295,19 @@
             }
             
             
-            self.anno.coordinate =  endCLPlacemark.location.coordinate;
+            
+            
+            
             // NSLog(@"%f,%f",self.coordinate.longitude,self.coordinate.latitude);
             //NSLog(@"%@",self.expected);
-            self.anno.title = [NSString stringWithFormat:@"%.1f min",obj.expectedTravelTime / 60];
-            [self.mapView addAnnotation:self.anno];
+           
+            
+            
             
             if (self.polyline != nil) {
                 [self.mapView removeOverlay:self.polyline];
             }
+            
             
             self.polyline = obj.polyline;
             [self.mapView addOverlay:self.polyline];
