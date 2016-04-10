@@ -14,6 +14,10 @@
 		602963F61C93F47700E918CE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 602963F51C93F47700E918CE /* Images.xcassets */; };
 		602963F91C93F47700E918CE /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 602963F71C93F47700E918CE /* LaunchScreen.xib */; };
 		602964051C93F47700E918CE /* CallBusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 602964041C93F47700E918CE /* CallBusTests.m */; };
+		6029640F1C93F66B00E918CE /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6029640E1C93F66B00E918CE /* MapKit.framework */; };
+		60624F5A1C94E2C5009DA5B8 /* CBAnno.m in Sources */ = {isa = PBXBuildFile; fileRef = 60624F591C94E2C5009DA5B8 /* CBAnno.m */; };
+		60AEF6791CBA075B008E3620 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AEF6761CBA075B008E3620 /* MBProgressHUD.m */; };
+		60AEF67A1CBA075B008E3620 /* MBProgressHUD+HM.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AEF6781CBA075B008E3620 /* MBProgressHUD+HM.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +44,13 @@
 		602963FE1C93F47700E918CE /* CallBusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CallBusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		602964031C93F47700E918CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		602964041C93F47700E918CE /* CallBusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CallBusTests.m; sourceTree = "<group>"; };
+		6029640E1C93F66B00E918CE /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		60624F581C94E2C5009DA5B8 /* CBAnno.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBAnno.h; sourceTree = "<group>"; };
+		60624F591C94E2C5009DA5B8 /* CBAnno.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CBAnno.m; sourceTree = "<group>"; };
+		60AEF6751CBA075B008E3620 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		60AEF6761CBA075B008E3620 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		60AEF6771CBA075B008E3620 /* MBProgressHUD+HM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+HM.h"; sourceTree = "<group>"; };
+		60AEF6781CBA075B008E3620 /* MBProgressHUD+HM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+HM.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6029640F1C93F66B00E918CE /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +75,7 @@
 		602963DC1C93F47700E918CE = {
 			isa = PBXGroup;
 			children = (
+				6029640E1C93F66B00E918CE /* MapKit.framework */,
 				602963E71C93F47700E918CE /* CallBus */,
 				602964011C93F47700E918CE /* CallBusTests */,
 				602963E61C93F47700E918CE /* Products */,
@@ -81,6 +94,10 @@
 		602963E71C93F47700E918CE /* CallBus */ = {
 			isa = PBXGroup;
 			children = (
+				60AEF6751CBA075B008E3620 /* MBProgressHUD.h */,
+				60AEF6761CBA075B008E3620 /* MBProgressHUD.m */,
+				60AEF6771CBA075B008E3620 /* MBProgressHUD+HM.h */,
+				60AEF6781CBA075B008E3620 /* MBProgressHUD+HM.m */,
 				602963EC1C93F47700E918CE /* AppDelegate.h */,
 				602963ED1C93F47700E918CE /* AppDelegate.m */,
 				602963EF1C93F47700E918CE /* ViewController.h */,
@@ -89,6 +106,8 @@
 				602963F51C93F47700E918CE /* Images.xcassets */,
 				602963F71C93F47700E918CE /* LaunchScreen.xib */,
 				602963E81C93F47700E918CE /* Supporting Files */,
+				60624F581C94E2C5009DA5B8 /* CBAnno.h */,
+				60624F591C94E2C5009DA5B8 /* CBAnno.m */,
 			);
 			path = CallBus;
 			sourceTree = "<group>";
@@ -168,6 +187,7 @@
 				TargetAttributes = {
 					602963E41C93F47700E918CE = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = L258FGE4SX;
 					};
 					602963FD1C93F47700E918CE = {
 						CreatedOnToolsVersion = 6.4;
@@ -219,8 +239,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60624F5A1C94E2C5009DA5B8 /* CBAnno.m in Sources */,
 				602963F11C93F47700E918CE /* ViewController.m in Sources */,
+				60AEF6791CBA075B008E3620 /* MBProgressHUD.m in Sources */,
 				602963EE1C93F47700E918CE /* AppDelegate.m in Sources */,
+				60AEF67A1CBA075B008E3620 /* MBProgressHUD+HM.m in Sources */,
 				602963EB1C93F47700E918CE /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,9 +372,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = CallBus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -359,9 +385,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = CallBus/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -418,6 +447,7 @@
 				6029640A1C93F47700E918CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6029640B1C93F47700E918CE /* Build configuration list for PBXNativeTarget "CallBusTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +456,7 @@
 				6029640D1C93F47700E918CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
