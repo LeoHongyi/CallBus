@@ -73,17 +73,23 @@
     self.navBtn.enabled = NO;
     
 
-    NSArray *locArr = @[@"26 cleveland harrison nj",@"250 central ave Newark nj"];
-    CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
-    CLGeocoder *geocoder2 = [[CLGeocoder alloc]init];
-    NSArray *geocoders = @[geocoder1,geocoder2];
+    NSArray *locArr = @[@"573 S Clinton St East Orange NJ",@"11 N Ridgewood Rd South Orange NJ",@"573 S Clinton St East Orange NJ",@"16 Sussex Ave Newark NJ"];
+    NSMutableArray *arr = [[NSMutableArray alloc]init];
     
-    int i = 0;
-  
+    //CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
+    //CLGeocoder *geocoder2 = [[CLGeocoder alloc]init];
+    //NSArray *geocoders = @[geocoder1,geocoder2];
     
-    for (i = 0; i < locArr.count; i++) {
+//    int i = 0;
+   
+    
+    for (int i = 0; i < locArr.count; i++) {
+         CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
+        [arr addObject:geocoder1];
+       // NSLog(@"%@",arr);
         NSLog(@"%@",locArr[i]);
-        [geocoders[i] geocodeAddressString:locArr[i] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+        
+        [arr[i] geocodeAddressString:locArr[i] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
             if (error == nil) {
                 CLPlacemark *placemark = [placemarks firstObject];
                 NSLog(@"%@",placemark);
@@ -100,6 +106,7 @@
             
         }];
     }
+
 }
 
 
@@ -447,6 +454,36 @@
 
 
 - (void)call{
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"input the phone number" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert addAction:[UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil]];
+     [alert addAction:[UIAlertAction actionWithTitle:@"Call" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+         NSString * phoneNum = [alert.textFields[0] text];
+         NSLog(@"%@",phoneNum);
+             NSURL *url  = [NSURL URLWithString:@"http://chuan.resource.campus.njit.edu:8080/MyWebAppTest/CallTest"];
+             NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
+             request.timeoutInterval = 5;
+             request.HTTPMethod = @"post";
+             NSString *param = [NSString stringWithFormat:@"number=%@",phoneNum];
+             request.HTTPBody = [param dataUsingEncoding:NSUTF8StringEncoding];
+             NSOperationQueue *queue = [NSOperationQueue mainQueue];
+             [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+         
+                 NSString *str = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+                 NSLog(@"%@",str);
+                 
+             }];
+         
+     }]];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+       textField.placeholder = @"please input phone number";
+        
+        
+    }];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+    
 //    NSURL *url  = [NSURL URLWithString:@"http://chuan.resource.campus.njit.edu:8080/MyWebAppTest/CallTest"];
 //    NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
 //    request.timeoutInterval = 5;
@@ -464,7 +501,7 @@
     
     
     
-    [MBProgressHUD showSuccess:@"success"];
+    //[MBProgressHUD showSuccess:@"success"];
     //NSLog(@"calling");
     
 
