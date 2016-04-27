@@ -5,7 +5,12 @@
 //  Created by hongyi liu on 16/3/12.
 //  Copyright (c) 2016年 hongyi liu. All rights reserved.
 //
-
+//To do
+/**
+ 1. annotation deploy on the map
+ 2. navigation route
+ 3. call system map
+ */
 #import "ViewController.h"
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
@@ -28,10 +33,17 @@
 @property(nonatomic,strong)CLPlacemark *startCLPlacemark;
 @property(nonatomic,strong)CLPlacemark *endCLPlacemark;
 @property(nonatomic,strong)NSString *expected;
-@property(nonatomic,strong)CBAnno *anno;
+@property(nonatomic,strong)CBAnno *anno1;
+@property(nonatomic,strong)CBAnno *anno2;
+@property(nonatomic,strong)CBAnno *anno3;
+@property(nonatomic,strong)CBAnno *anno4;
 @property(nonatomic,strong)MKPolyline *polyline;
 @property (weak, nonatomic)IBOutlet UILabel *expeectedTime;
 @property(nonatomic,assign)BOOL res;
+@property(nonatomic,strong)NSArray *locArr;
+@property(nonatomic,assign)int i;
+
+
 
 
 @end
@@ -65,52 +77,141 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self lM];
-    //self.anno = [[CBAnno alloc]init];
+    
     
     self.mapView.showsUserLocation = YES;
     self.mapView.showsTraffic = YES;
     self.mapView.userTrackingMode = MKUserTrackingModeFollowWithHeading;
     self.mapView.delegate = self;
     self.navBtn.enabled = NO;
-    //self.res = false;
-
-    NSArray *locArr = @[@"573 S Clinton St East Orange NJ",@"11 N Ridgewood Rd South Orange NJ",@"573 S Clinton St East Orange NJ",@"16 Sussex Ave Newark NJ"];
-    NSMutableArray *arr = [[NSMutableArray alloc]init];
     
-    //CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
-    //CLGeocoder *geocoder2 = [[CLGeocoder alloc]init];
-    //NSArray *geocoders = @[geocoder1,geocoder2];
     
-//    int i = 0;
+    self.anno1= [[CBAnno alloc]init];
+    self.anno1.coordinate = CLLocationCoordinate2DMake(40.746551, -74.2271787);
+    CLLocation *loc1 = [[CLLocation alloc]initWithLatitude:self.anno1.coordinate.latitude longitude:self.anno1.coordinate.longitude];
+    self.anno1.title = @"Destionation";
+    [self.mapView addAnnotation:self.anno1];
+    
+    self.anno2= [[CBAnno alloc]init];
+    self.anno2.coordinate = CLLocationCoordinate2DMake(40.747573,  -74.263375);
+    CLLocation *loc2 = [[CLLocation alloc]initWithLatitude:self.anno2.coordinate.latitude longitude:self.anno2.coordinate.longitude];
+    self.anno2.title = @"Destionation";
+    [self.mapView addAnnotation:self.anno2];
+    
+    self.anno3= [[CBAnno alloc]init];
+    self.anno3.coordinate = CLLocationCoordinate2DMake(40.746368,  -74.227077);
+    CLLocation *loc3 = [[CLLocation alloc]initWithLatitude:self.anno3.coordinate.latitude longitude:self.anno3.coordinate.longitude];
+    self.anno3.title = @"Destionation";
+    [self.mapView addAnnotation:self.anno3];
+    
+    self.anno4 = [[CBAnno alloc]init];
+    self.anno4.coordinate = CLLocationCoordinate2DMake(40.743400,  -74.176042);
+    CLLocation *loc4 = [[CLLocation alloc]initWithLatitude:self.anno4.coordinate.latitude longitude:self.anno4.coordinate.longitude];
+    self.anno4.title = @"Destionation";
+    [self.mapView addAnnotation:self.anno4];
+    
+    self.locArr = @[loc1,loc2,loc3,loc4];
+    self.i = 0;
+    
+    
    
-    
-    for (int i = 0; i < locArr.count; i++) {
-         CLGeocoder *geocoder1 = [[CLGeocoder alloc]init];
-        [arr addObject:geocoder1];
-       // NSLog(@"%@",arr);
-        //NSLog(@"%@",locArr[i]);
-        
-        [arr[i] geocodeAddressString:locArr[i] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
-            if (error == nil) {
-                CLPlacemark *placemark = [placemarks firstObject];
-               // NSLog(@"%@",placemark);
-                CBAnno *anno1 = [[CBAnno alloc]init];
-                anno1.coordinate = placemark.location.coordinate;
-                anno1.title = @"Destionation";
-                
-                
-                [self.mapView addAnnotation:anno1];
-                
-                
-            }
-            
-            
-            
-        }];
-    }
-
 }
 
+
+
+
+-(void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+    // NSLog(@"user location");
+    [self.mapView setCenterCoordinate:userLocation.location.coordinate animated:YES];
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
+    MKCoordinateRegion region = MKCoordinateRegionMake(userLocation.location.coordinate, span);
+    [self.mapView setRegion:region];
+    // self.count = 0;
+    userLocation.title = @"current location";
+    
+    
+    self.startLoc = userLocation.location;
+    
+    [self.geocoder reverseGeocodeLocation:userLocation.location completionHandler:^(NSArray *placemarks, NSError *error) {
+        
+        if (error == nil) {
+            CLPlacemark *placemark = [placemarks firstObject];
+            
+            self.startCLPlacemark = placemark;
+            
+           
+                [self.geocoder reverseGeocodeLocation:self.locArr[self.i] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+                    if (error == nil) {
+                        self.endCLPlacemark = [placemarks firstObject];
+                        //NSLog(@"%f",self.endCLPlacemark.location.coordinate.latitude);
+                        [self startDirectionsWithstartCLPlacemark:self.startCLPlacemark endCLPlacemark:self.endCLPlacemark];
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            NSLog(@"%d",[self.expected intValue]);
+                            if ([self.expected intValue] <= 4 && (self.res == false) &&[self.expected intValue] >1 && self.i % 2== 0 ) {
+                                [self call:@"434-806-3152"];
+                                NSLog(@"434-806-3152");
+                                NSLog(@"%d",self.res);
+                                
+                               
+                            }
+                            if ([self.expected intValue] <= 4 && (self.res == false) &&[self.expected intValue] >1 && self.i % 2 != 0) {
+                                [self call:@"973-780-0848"];
+                                //NSLog(@"434-806-3152");
+                                NSLog(@"%d",self.res);
+                                
+                            }
+                            
+                            
+                            if ([self.expected intValue] <= 1) {
+                                
+                                [self.mapView removeAnnotation:self.anno1];
+                                self.res = false;
+                                NSLog(@"refresh%d ", self.res);
+                                NSLog(@"%d",self.i);
+                                if (self.i < 4) {
+                                    self.i += 1;
+                                    NSLog(@"%d",self.i);
+                                }
+                                
+                            }
+                        });
+                        
+                        
+                        
+                    }
+                }];
+      
+            
+            
+            
+            
+            
+//            NSLog(@"user location is %d",self.res);
+//            if (self.endCLPlacemark != NULL && self.res == false) {
+//                [self startDirectionsWithstartCLPlacemark:placemark endCLPlacemark:self.endCLPlacemark];
+//                NSLog(@"user location start");
+//                
+//            } else {
+//                [self startDirectionsWithstartCLPlacemark1:placemark endCLPlacemark:self.endCLPlacemark];
+//                
+//            }
+//            
+//            
+//            if (self.startCLPlacemark == self.endCLPlacemark) {
+//                self.res = false;
+//                [self.mapView removeOverlay:self.polyline];
+//                
+//                
+//            }
+        }
+    }];
+    
+    
+    
+    
+    
+}
 
 
 -(void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
@@ -168,50 +269,7 @@
 }
 
 
--(void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
-{
-   // NSLog(@"user location");
-    [self.mapView setCenterCoordinate:userLocation.location.coordinate animated:YES];
-//    MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
-//    MKCoordinateRegion region = MKCoordinateRegionMake(userLocation.location.coordinate, span);
-//    [self.mapView setRegion:region];
-   // self.count = 0;
-    userLocation.title = @"current location";
-    
-    
-    self.startLoc = userLocation.location;
-    
-    [self.geocoder reverseGeocodeLocation:userLocation.location completionHandler:^(NSArray *placemarks, NSError *error) {
-        
-        if (error == nil) {
-            CLPlacemark *placemark = [placemarks firstObject];
-            
-            self.startCLPlacemark = placemark;
-            //NSLog(@"%@",self.startCLPlacemark);
-            NSLog(@"user location is %d",self.res);
-            if (self.endCLPlacemark != NULL && self.res == false) {
-                [self startDirectionsWithstartCLPlacemark:placemark endCLPlacemark:self.endCLPlacemark];
-                NSLog(@"user location start");
-                
-            } else {
-                [self startDirectionsWithstartCLPlacemark1:placemark endCLPlacemark:self.endCLPlacemark];
-                
-            }
-            
-            
-            if (self.startCLPlacemark == self.endCLPlacemark) {
-                self.res = false;
-                [self.mapView removeOverlay:self.polyline];
-                
-            }
-        }
-    }];
-   
-    
-    
-    
-    
-}
+
 
 
 
@@ -269,7 +327,7 @@
                // NSLog(@"%@",self.endCLPlacemark);
                 NSLog(@"tttt-----%f",self.startCLPlacemark.location.coordinate.latitude - self.endCLPlacemark.location.coordinate.latitude);
                 if (self.startCLPlacemark  == self.endCLPlacemark) {
-                    self.res = false;
+                    //self.res = false;
                     [self.mapView removeOverlay:self.polyline];
                     NSLog(@"%d",self.res);
                    // [self.mapView removeAnnotation:view.annotation];
@@ -331,22 +389,22 @@
             self.expected = [NSString stringWithFormat:@"%.1f min",obj.expectedTravelTime / 60];
            
         
-            if ([self.expected intValue] == 0) {
-                //self.startCLPlacemark = self.endCLPlacemark;
-                self.res = false;
-            }
-            
-            if ([self.expected intValue] <= 5 && [self.expected intValue] > 0) {
-                
-                
-                    [self call];
-                    self.res = true;
-
-                
-            } else {
-            
-                    self.res = false;
-            }
+//            if ([self.expected intValue] <= 1) {
+//                //self.startCLPlacemark = self.endCLPlacemark;
+//                self.res = false;
+//            }
+//            
+//            if ([self.expected intValue] <= 5 && [self.expected intValue] > 0) {
+//                
+//                
+//                
+//                    self.res = true;
+//
+//                
+//            } else {
+//            
+//                    self.res = false;
+//            }
            
            
             
@@ -398,7 +456,7 @@
             self.expected = [NSString stringWithFormat:@"%.1f min",obj.expectedTravelTime / 60];
             if ([self.expected intValue] == 0) {
                 //self.startCLPlacemark = self.endCLPlacemark;
-                self.res = false;
+                //self.res = false;
             }
             
             
@@ -485,56 +543,28 @@
 }
 
 
-- (void)call{
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"input the phone number" message:nil preferredStyle:UIAlertControllerStyleAlert];
-   
-    [alert addAction:[UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-        self.res = true;
-    }]];
-    
-     [alert addAction:[UIAlertAction actionWithTitle:@"Call" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-         NSString * phoneNum = [alert.textFields[0] text];
+- (void)call:(NSString*)phoneNum{
          
          self.res = true;
          //NSLog(@"%@",phoneNum);
-             NSURL *url  = [NSURL URLWithString:@"http://chuan.resource.campus.njit.edu:8080/MyWebAppTest/CallTest"];
-             NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
-             request.timeoutInterval = 5;
-             request.HTTPMethod = @"post";
-             NSString *param = [NSString stringWithFormat:@"number=%@",phoneNum];
-             request.HTTPBody = [param dataUsingEncoding:NSUTF8StringEncoding];
-             NSOperationQueue *queue = [NSOperationQueue mainQueue];
-             [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
-         
-                 NSString *str = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-                 NSLog(@"%@",str);
-                 //if (str != nil) {
+//             NSURL *url  = [NSURL URLWithString:@"http://chuan.resource.campus.njit.edu:8080/MyWebAppTest/CallTest"];
+//             NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
+//             request.timeoutInterval = 5;
+//             request.HTTPMethod = @"post";
+//             NSString *param = [NSString stringWithFormat:@"number=%@",phoneNum];
+//             request.HTTPBody = [param dataUsingEncoding:NSUTF8StringEncoding];
+//             NSOperationQueue *queue = [NSOperationQueue mainQueue];
+//             [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+//         
+//                 NSString *str = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+//                 NSLog(@"%@",str);
+    
                      self.res = true;
-                 //}
+            
                  
-             }];
+            // }];
         
-         
-         
-     }]];
-    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-       textField.placeholder = @"please input phone number";
-        self.res = true;
-        
-    }];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-    
-   
-   
-    
 
-    
-
-    
-    
     
 }
 
